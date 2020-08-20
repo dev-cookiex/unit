@@ -29,7 +29,7 @@ declare global {
 
 interface Unit extends globalThis.Unit.Polymorphism.UnitFunction {
   ( value: number ): globalThis.Unit.WithoutSystem
-  load(): void
+  load( ...systems: ( 'digital' | 'length' )[] ): void
 }
 
 const Unit: Unit = ( value: number, unit?: any, __system?: System<any> ) => {
