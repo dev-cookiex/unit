@@ -1,9 +1,7 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import System from './System'
 
-import './systems/digital'
-import './systems/length'
-
+export { default as System } from './System'
 namespace Base {
   export interface Unit {
     value: number
@@ -29,8 +27,9 @@ declare global {
   }
 }
 
-interface Unit extends Unit.Polymorphism.UnitFunction {
-  ( value: number ): Unit.WithoutSystem
+interface Unit extends globalThis.Unit.Polymorphism.UnitFunction {
+  ( value: number ): globalThis.Unit.WithoutSystem
+  load(): void
 }
 
 const Unit: Unit = ( value: number, unit?: any, __system?: System<any> ) => {
@@ -63,4 +62,7 @@ const Unit: Unit = ( value: number, unit?: any, __system?: System<any> ) => {
   return _
 }
 
-export = Unit
+Unit.load = ( ...systems: ( 'digital' | 'length' )[] ) =>
+  systems.forEach( system => require( `./systems/${system}` ) )
+
+export default Unit
