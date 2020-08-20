@@ -19,9 +19,9 @@ class System<U extends System.Units> {
   private __units: SystemUnit<U>[] = []
   private __parser: Parser<U> | null = null
 
-  constructor( public name: string, public base: System.Unit<U> ) {
-    if ( System.__systems.some( system => system.name === this.name ) ) throw new Error( '' )
-    System.__systems.push( this )
+  constructor( public name: string, public base: System.Unit<U>, register = true ) {
+    if ( register && System.__systems.some( system => system.name === this.name ) ) throw new Error( '' )
+    if ( register ) System.__systems.push( this )
   }
 
   public units = (): System.Unit<U>[] => this.__units.map( unit => unit.unit )
