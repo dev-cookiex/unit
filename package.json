@@ -6,7 +6,8 @@
   "author": "tony-tsx <tony.js@zoho.eu>",
   "license": "MIT",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "prepublishOnly": "yarn build"
   },
   "devDependencies": {
     "@cookiex/eslint-config": "^0.3.3",
