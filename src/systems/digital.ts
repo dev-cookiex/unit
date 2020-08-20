@@ -1,7 +1,18 @@
 import System from '../System'
 
 const digital = new System<digital.Units>( 'digital', 'B' )
-  .add( 'b', 'Bit', 'Bits', 'multiply', 8 )
+  .add( 'b', 'Bit', 'Bits', 'multiply', 8, true )
+  .add( 'kb', 'Kilobit', 'Kilobits', 'divide', 125, true )
+  .add( 'kib', 'Kibibit', 'Kibibits', 'divide', 128, true )
+  .add( 'Mb', 'Megabit', 'Megabits', 'divide', 125000, true )
+  .add( 'Mib', 'Mebibit', 'Mebibits', 'divide', 131072, true )
+  .add( 'Gb', 'Gigabit', 'Gigabits', 'divide', 1.25e+8, true )
+  .add( 'Gib', 'Gibibit', 'Gibibits', 'divide', 1.342e+8, true )
+  .add( 'Tb', 'Terabit', 'Terabits', 'divide', 1.25e+11, true )
+  .add( 'Tib', 'Tebibit', 'Tebibits', 'divide', 1.374e+11, true )
+  .add( 'Pb', 'Petabit', 'Petabit', 'divide', 1.25e+14, true )
+  .add( 'Pib', 'Pebibit', 'Pebibit', 'divide', 1.407e+14, true )
+
   .unit( 'B', 'Byte', 'Bytes' )
   .add( 'kB', 'Kilobyte', 'Kilobytes', 'multiply', 1000 )
   .add( 'MB', 'Megabyte', 'Megabytes', 'multiply', 1e+6 )
