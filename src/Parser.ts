@@ -2,33 +2,67 @@ import { Units, Unit } from './System'
 import SystemUnit from './SystemUnit'
 
 class Parser<U extends Units> {
-  private __units: { [K in Unit<U>]: Parser.Calc } = {} as any
+  private __units: { [K in Unit<U>]: {
+    operator: Parser.Operators
+    value: number
+    unreverse: boolean
+  } } = {} as any
 
-  constructor( private base: Unit<U> ) { this.add( base, value => value ) }
-
-  public add: {
-    ( unit: Unit<U>, calc: Parser.Calc ): Parser<U>
-    ( unit: Unit<U>, op: Parser.Operators, value: number ): Parser<U>
-  } = ( unit: Unit<U>, opOrCalc: Parser.Operators | Parser.Calc, value?: number ) => {
-    if ( typeof opOrCalc === 'function' ) this.__units[unit] = opOrCalc
-    else if ( value ) this.__units[unit] = from => {
-      switch ( opOrCalc ) {
-        case 'divide': return from / value
-        case 'multiply': return from * value
-        case 'subtraction': return from - value
-        case 'sum': return from + value
-        default: throw new Error( `unknown operator ${opOrCalc}` )
-      }
+  private static signal = ( operator: Parser.Operators, reverse = false ) => {
+    switch ( operator ) {
+      case 'multiply': return reverse ? '/' : '*'
+      case 'divide': return !reverse ? '/' : '*'
+      case 'sum': return reverse ? '-' : '+'
+      case 'subtraction': return !reverse ? '-' : '+'
+      default: throw new Error( '' )
+      
     }
-    else throw new Error( `Expect receive value to use operator ${opOrCalc}` )
-    
+  }
+
+  private static calc = ( x: number, operator: Parser.Operators, y: number, reverse = false ) => {
+    switch ( operator ) {
+      case 'divide':
+        if ( reverse ) return x * y
+        else return x / y
+      case 'multiply':
+        if ( reverse ) return x / y
+        else return x * y
+      case 'subtraction':
+        if ( reverse ) return x + y
+        else return x - y
+      case 'sum':
+        if ( reverse ) return x - y
+        else return x + y
+      default: throw new Error( '' )
+      
+    }
+  }
+
+  constructor( private base: Unit<U> ) { this.add( base, 'sum', 0 ) }
+
+  public add = ( unit: Unit<U>, operator: Parser.Operators, value: number, unreverse = false ) => {
+    this.__units[unit] = { operator, value, unreverse }
+
     return this
   }
 
   public execute: SystemUnit.Parser<U> = ( value, from, to ) => {
-    const baseValue = this.__units[from]( value )
-    if ( !this.__units[to] ) throw new Error( `not find unit ${from}` )
-    return this.__units[to]( baseValue )
+    const fromInfo = this.__units[from]
+    const toInfo = this.__units[to]
+    const fromCalc = Parser.calc( value, fromInfo.operator, fromInfo.value )
+    const toCalc = Parser.calc( fromCalc, toInfo.operator, toInfo.value, true && !toInfo.unreverse )
+
+    /*
+    console.log( `1${this.base} ${Parser.signal( fromInfo.operator )} ${fromInfo.value} = 1${from}` )
+    console.log( `1${this.base} ${Parser.signal( toInfo.operator )} ${toInfo.value} = 1${to}` )
+    console.log(
+      `${fromCalc}${this.base} ${Parser.signal( toInfo.operator, true && !toInfo.unreverse )} ${toInfo.value} = x`
+    )
+    console.log( `${value}${from} = ${fromCalc}${this.base}` )
+    console.log( `${fromCalc}${this.base} = ${value}${from} = ${toCalc}${to}` )
+    */
+  
+    return toCalc
   }
 
   public compile = () => this.execute
