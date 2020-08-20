@@ -1,6 +1,6 @@
 {
   "name": "@cookiex/unit",
-  "version": "0.0.0",
+  "version": "0.0.0-7cfaae3be586b76576a4c1548400cad344e26588",
   "main": "dist/index.js",
   "repository": "https://github.com/dev-cookiex/unit.git",
   "author": "tony-tsx <tony.js@zoho.eu>",
