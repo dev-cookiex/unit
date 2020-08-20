@@ -17,32 +17,33 @@ declare global {
   }
 }
 
-const Unit: Unit = ( value: number, unit?: any ) => {
+const Unit: Unit = ( value: number, unit?: any, __system?: System<any> ) => {
   const _: any = {
     convert( unit: any ) {
-      const system = System.findByUnit( unit )
-      if ( !system ) throw new Error( '' )
+      if ( !this.__system ) this.__system = System.findByUnit( unit )
+      if ( !this.__system ) throw new Error( '' )
   
-      if ( !this.unit ) this.unit = system.base
+      if ( !this.unit ) this.unit = this.__system
   
-      if ( !system.has( this.unit ) ) throw new Error( '' )
+      if ( !this.__system.has( this.unit ) ) throw new Error( '' )
   
-      return Unit( system.convert( this.value, unit, this.unit ), unit )
-    },
-    toString( verbose = true ) {
-      if ( verbose )
-        if ( this.value % 1 !== 0 ) return `${this.value} ${this.unit}`
-        else if ( this.value === 1 ) return `${this.value} ${this.singular}`
-        else return `${this.value} ${this.plural}`
-      return `${this.value}${this.unit}`
+      return Unit(
+        this.__system.convert( this.value, unit, this.unit ),
+        unit,
+        // @ts-ignore
+        this.__system
+      )
     },
     value,
+    __system,
   }
-  if ( unit ) {
-    const system = System.findByUnit( unit )
-    if ( !system ) throw new Error( '' )
-    Object.assign( _, system.get( unit ) )
-  }
+  if ( unit && !_.__system ) {
+    _.__system = System.findByUnit( unit )
+    if ( !_.__system ) throw new Error( '' )
+    Object.assign( _, _.__system.get( unit ) )
+  } else if ( unit.__system )
+    Object.assign( _, _.__system.get( unit ) )
+
   return _
 }
 
