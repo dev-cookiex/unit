@@ -52,12 +52,14 @@ namespace digital {
 }
 
 declare global {
-  export interface Unit {
-    ( value: number, unity: System.Unit<digital.Units> ): Unit.UnitWithSystem<System<digital.Units>>
-  }
   namespace Unit {
-    export interface UnitWithoutSystem {
-      convert( to: System.Unit<digital.Units> ): Unit.UnitWithSystem<System<digital.Units>>
+    export namespace Polymorphism {
+      export interface UnitFunction {
+        ( value: number, unity: System.Unit<digital.Units> ): Unit.WithSystem<System<digital.Units>>
+      }
+      export interface WithoutSystem {
+        to( unity: System.Unit<digital.Units> ): Unit.WithSystem<System<digital.Units>>
+      }
     }
   }
 }

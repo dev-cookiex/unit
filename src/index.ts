@@ -4,22 +4,38 @@ import System from './System'
 import './systems/digital'
 import './systems/length'
 
-declare global {
-  interface Unit {}
-  namespace Unit {
-    export interface UnitWithSystem<S extends System<any>> {
-      convert( to: S extends System<infer U> ? System.Unit<U> : never ): UnitWithSystem<S>
-      unit: S extends System<infer U> ? System.Unit<U> : never
-      info: S extends System<infer U> ? System.Info<U> : never
-      value: number
-    }
-    export interface UnitWithoutSystem {}
+namespace Base {
+  export interface Unit {
+    value: number
   }
+  export interface WithSystem<S extends System<any>> extends
+    Base.Unit,
+    System.Info<S extends System<infer U> ? U : never> {
+      to( to: S extends System<infer U> ? System.Unit<U> : never ): WithSystem<S>
+    }
+  export interface WithoutSystem extends Base.Unit, Partial<System.Info<any>> {}
+}
+
+declare global {
+  namespace Unit {
+    export namespace Polymorphism {
+      export interface UnitFunction {}
+      export interface WithSystem<S extends System<any>> {}
+      export interface WithoutSystem {}
+    }
+    export interface WithSystem<S extends System<any>> extends Polymorphism.WithSystem<S>, Base.WithSystem<S> {}
+
+    export interface WithoutSystem extends Polymorphism.WithoutSystem, Base.WithoutSystem {}
+  }
+}
+
+interface Unit extends Unit.Polymorphism.UnitFunction {
+  ( value: number ): Unit.WithoutSystem
 }
 
 const Unit: Unit = ( value: number, unit?: any, __system?: System<any> ) => {
   const _: any = {
-    convert( unit: any ) {
+    to( unit: any ) {
       if ( !this.__system ) this.__system = System.findByUnit( unit )
       if ( !this.__system ) throw new Error( '' )
   
@@ -45,20 +61,6 @@ const Unit: Unit = ( value: number, unit?: any, __system?: System<any> ) => {
     Object.assign( _, _.__system.get( unit ) )
 
   return _
-}
-
-interface Unit extends globalThis.Unit {
-  ( value: number ): Unit.UnitWithoutSystem
-}
-
-namespace Unit {
-  export interface UnitWithoutSystem extends globalThis.Unit.UnitWithoutSystem, Partial<System.Info<any>> {
-    value: number
-  }
-  export interface UnitWithSystem<S extends System<any>> extends System.Info<S extends System<infer U> ? U : never> {
-    convert( to: S extends System<infer U> ? System.Unit<U> : never ): UnitWithSystem<S>
-    value: number
-  }
 }
 
 export = Unit

@@ -32,12 +32,14 @@ namespace length {
 }
 
 declare global {
-  export interface Unit {
-    ( value: number, unity: System.Unit<length.Units> ): Unit.UnitWithSystem<System<length.Units>>
-  }
   namespace Unit {
-    export interface UnitWithoutSystem {
-      convert( to: System.Unit<length.Units> ): Unit.UnitWithSystem<System<length.Units>>
+    export namespace Polymorphism {
+      export interface UnitFunction {
+        ( value: number, unity: System.Unit<length.Units> ): Unit.WithSystem<System<length.Units>>
+      }
+      export interface WithoutSystemTo {
+        ( unity: System.Unit<length.Units> ): Unit.WithSystem<System<length.Units>>
+      }
     }
   }
 }
