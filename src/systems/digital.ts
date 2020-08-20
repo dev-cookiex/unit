@@ -26,7 +26,29 @@ const digital = new System<digital.Units>( 'digital', 'B' )
   .add( 'PiB', 'Pebibyte', 'Pebibyte', 'multiply', 1.126e+15 )
 
 namespace digital {
-  export type Units = [ 'b', 'B', 'kB', 'MB', 'MiB', 'GB', 'GiB', 'TB', 'TiB', 'PB', 'PiB' ]
+  export type Units = [
+    'b',
+    'kb', 'kib',
+    'Mb', 'Mib',
+    'Gb', 'Gib',
+    'Tb', 'Tib',
+    'Pb', 'Pib',
+    
+    // 'Eb', 'Eib',
+    // 'Zb', 'Zib',
+    // 'Yb', 'Yib',
+
+    'B',
+    'kB', 'kiB',
+    'MB', 'MiB',
+    'GB', 'GiB',
+    'TB', 'TiB',
+    'PB', 'PiB',
+
+    // 'EB', 'EiB',
+    // 'ZB', 'ZiB',
+    // 'YB', 'YiB',
+  ]
 }
 
 declare global {
