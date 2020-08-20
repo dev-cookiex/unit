@@ -15,6 +15,7 @@ const digital = new System<digital.Units>( 'digital', 'B' )
 
   .unit( 'B', 'Byte', 'Bytes' )
   .add( 'kB', 'Kilobyte', 'Kilobytes', 'multiply', 1000 )
+  .add( 'kiB', 'Kibibyte', 'Kibibytes', 'multiply', 1024 )
   .add( 'MB', 'Megabyte', 'Megabytes', 'multiply', 1e+6 )
   .add( 'MiB', 'Mebibyte', 'Mebibytes', 'multiply', 1.049e+6 )
   .add( 'GB', 'Gigabyte', 'Gigabytes', 'multiply', 1e+9 )
