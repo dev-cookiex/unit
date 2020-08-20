@@ -1,4 +1,10 @@
-/* eslint-disable prefer-arrow/prefer-arrow-functions */
+/**
+ * Copyright (c) CookieX.
+ *  
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import System from './System'
 
 export { default as System } from './System'

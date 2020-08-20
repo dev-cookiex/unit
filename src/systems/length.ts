@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) CookieX.
+ *  
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 import System from '../System'
 
 const length = new System<length.Units>( 'length', 'm' )
@@ -37,8 +43,8 @@ declare global {
       export interface UnitFunction {
         ( value: number, unity: System.Unit<length.Units> ): Unit.WithSystem<System<length.Units>>
       }
-      export interface WithoutSystemTo {
-        ( unity: System.Unit<length.Units> ): Unit.WithSystem<System<length.Units>>
+      export interface WithoutSystem {
+        to( unity: System.Unit<length.Units> ): Unit.WithSystem<System<length.Units>>
       }
     }
   }
