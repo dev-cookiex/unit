@@ -35,11 +35,6 @@ declare global {
 
 interface Unit extends globalThis.Unit.Polymorphism.UnitFunction {
   ( value: number ): globalThis.Unit.WithoutSystem
-  <S extends System<any>>(
-    value: number,
-    unit: ( S extends System<infer U> ? System.Unit<U> : never ) | undefined | null,
-    system: S
-  ): globalThis.Unit.WithSystem<S>
   load( ...systems: ( 'digital' | 'length' )[] ): void
   use<S extends System<any>>( system: S ): (
     value: number,
@@ -48,18 +43,20 @@ interface Unit extends globalThis.Unit.Polymorphism.UnitFunction {
 }
 
 const Unit: Unit = ( value: number, unit?: any, __system?: System<any> ) => {
+
   const _: any = {
     to( unit: any ) {
       if ( !this.__system ) this.__system = System.findByUnit( unit )
-      if ( !this.__system ) throw new Error( '' )
+      if ( !this.__system ) throw new Error( `not find system with ${unit}` )
   
       if ( !this.unit ) this.unit = this.__system.base
   
-      if ( !this.__system.has( this.unit ) ) throw new Error( '' )
+      if ( !this.__system.has( this.unit ) ) throw new Error( `${this.__system.name} not have ${unit} unit` )
   
       return Unit(
         this.__system.convert( this.value, unit, this.unit ),
         unit,
+        // @ts-ignore
         this.__system
       )
     },
@@ -68,7 +65,8 @@ const Unit: Unit = ( value: number, unit?: any, __system?: System<any> ) => {
   }
   if ( unit && !_.__system ) {
     _.__system = System.findByUnit( unit )
-    if ( !_.__system ) throw new Error( '' )
+    if ( !_.__system ) throw new Error( `not find system with ${unit}` )
+    if ( !_.__system.has( unit ) ) throw new Error( `${_.__system.name} not have ${unit} unit` )
     Object.assign( _, _.__system.get( unit ) )
   } else if ( unit.__system && unit )
     Object.assign( _, _.__system.get( unit ) )
@@ -76,11 +74,13 @@ const Unit: Unit = ( value: number, unit?: any, __system?: System<any> ) => {
   return _
 }
 
-Unit.load = ( ...systems: ( 'digital' | 'length' )[] ) =>
-  systems.forEach( system => require( `./systems/${system}` ) )
+Unit.load = ( ...systems: string[] ) => systems.forEach( system => {
+  require( `./systems/${system}` )
+} )
 
-Unit.use = <S extends System<any>>( system: S ) =>
-  ( value: number, unit?: S extends System<infer U> ? System.Unit<U> : never ) =>
-    Unit( value, unit, system )
+Unit.use = ( <S extends System<any>>( system: S ) =>
+  ( value: number, unit?: ( S extends System<infer U> ? System.Unit<U> : never ) | undefined | null ) =>
+    // @ts-ignore
+    Unit( value, unit, system ) ) as any
 
 export default Unit
