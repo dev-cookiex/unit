@@ -1,13 +1,11 @@
 # CookieX Unit
 
 ## Install
----
 ```
 yarn add @cookiex/unit
 ```
 
 ## Usage
----
 Easy conversion of units.
 ```ts
 import Unit from '@cookiex/unit'
@@ -79,5 +77,4 @@ declare global {
 ```
 
 ## License
----
 CookieX Unit is [MIT Licensed](https://github.com/dev-cookiex/unit/blob/main/LICENSE)
