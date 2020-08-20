@@ -38,9 +38,8 @@ class System<U extends System.Units> {
     singular: string,
     plural: string,
     operator: Parser.Operators,
-    value: number,
-    unreverse?: boolean
-  ) => this.unit( unit, singular, plural, this.parser.add( unit, operator, value, unreverse ).execute ) // eslint-disable-line
+    value: number
+  ) => this.unit( unit, singular, plural, this.parser.add( unit, operator, value ).execute ) // eslint-disable-line
 
   public unit = (
     unit: System.Unit<U>,

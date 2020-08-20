@@ -5,7 +5,6 @@ class Parser<U extends Units> {
   private __units: { [K in Unit<U>]: {
     operator: Parser.Operators
     value: number
-    unreverse: boolean
   } } = {} as any
 
   private static signal = ( operator: Parser.Operators, reverse = false ) => {
@@ -40,28 +39,21 @@ class Parser<U extends Units> {
 
   constructor( private base: Unit<U> ) { this.add( base, 'sum', 0 ) }
 
-  public add = ( unit: Unit<U>, operator: Parser.Operators, value: number, unreverse = false ) => {
-    this.__units[unit] = { operator, value, unreverse }
+  public add = ( unit: Unit<U>, operator: Parser.Operators, value: number ) => {
+    this.__units[unit] = { operator, value }
 
     return this
   }
 
-  public execute: SystemUnit.Parser<U> = ( value, from, to ) => {
-    const fromInfo = this.__units[from]
-    const toInfo = this.__units[to]
-    const fromCalc = Parser.calc( value, fromInfo.operator, fromInfo.value )
-    const toCalc = Parser.calc( fromCalc, toInfo.operator, toInfo.value, true && !toInfo.unreverse )
+  public execute: SystemUnit.Parser<U> = ( value, fromUnit, toUnit ) => {
+    const from = Object.assign( this.__units[fromUnit], { unit: fromUnit, current: value } )
+    const to = Object.assign( this.__units[toUnit], { unit: toUnit } )
 
-    /*
-    console.log( `1${this.base} ${Parser.signal( fromInfo.operator )} ${fromInfo.value} = 1${from}` )
-    console.log( `1${this.base} ${Parser.signal( toInfo.operator )} ${toInfo.value} = 1${to}` )
-    console.log(
-      `${fromCalc}${this.base} ${Parser.signal( toInfo.operator, true && !toInfo.unreverse )} ${toInfo.value} = x`
-    )
-    console.log( `${value}${from} = ${fromCalc}${this.base}` )
-    console.log( `${fromCalc}${this.base} = ${value}${from} = ${toCalc}${to}` )
-    */
-  
+    const fromCalc = Parser.calc( value, from.operator, from.value, true )
+    const toCalc = Parser.calc( fromCalc, to.operator, to.value )
+
+    // console.log( `${value}${from.unit} = ${fromCalc}${this.base} = ${toCalc}${to.unit}` )
+
     return toCalc
   }
 
