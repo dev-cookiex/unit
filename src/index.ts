@@ -24,6 +24,7 @@ declare global {
   namespace Unit {
     export namespace Polymorphism {
       export interface UnitFunction {}
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       export interface WithSystem<S extends System<any>> {}
       export interface WithoutSystem {}
     }

@@ -1,3 +1,6 @@
 {
-  "extends": "@cookiex"
+  "extends": "@cookiex",
+  "globals": {
+    "globalThis": "readonly"
+  }
 }
