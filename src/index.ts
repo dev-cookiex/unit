@@ -8,6 +8,9 @@
 import System from './System'
 
 export { default as System } from './System'
+
+import './systems/digital'
+import './systems/length'
 namespace Base {
   export interface Unit {
     value: number
@@ -36,7 +39,6 @@ declare global {
 
 interface Unit extends globalThis.Unit.Polymorphism.UnitFunction {
   ( value: number ): globalThis.Unit.WithoutSystem
-  load( ...systems: ( 'digital' | 'length' )[] ): void
   use<S extends System<any>>( system: S ): (
     value: number,
     unit?: S extends System<infer U> ? System.Unit<U> : never
@@ -74,10 +76,6 @@ const Unit: Unit = ( value: number, unit?: any, __system?: System<any> ) => {
 
   return _
 }
-
-Unit.load = ( ...systems: string[] ) => systems.forEach( system => {
-  require( `./systems/${system}` )
-} )
 
 Unit.use = ( <S extends System<any>>( system: S ) =>
   ( value: number, unit?: ( S extends System<infer U> ? System.Unit<U> : never ) | undefined | null ) =>
